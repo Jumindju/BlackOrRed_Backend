@@ -1,9 +1,11 @@
 using GameService;
+using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+    .ConfigureServices(services => { services.AddHostedService<Worker>(); })
+    .UseSerilog((context, serilogConfig) =>
     {
-        services.AddHostedService<Worker>();
+        serilogConfig.ReadFrom.Configuration(context.Configuration);
     })
     .Build();
 

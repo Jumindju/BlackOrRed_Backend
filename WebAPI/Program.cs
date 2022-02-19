@@ -1,6 +1,24 @@
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+builder.Host.UseSerilog((_, serilogConfig) =>
+{
+    serilogConfig.ReadFrom.Configuration(builder.Configuration);
+});
 
-app.MapGet("/", () => "Hello World!");
+var app = builder
+    .Build();
 
-app.Run();
+app.UseSerilogRequestLogging();
+
+app.MapGet("/test", () => "Hello World!");
+
+try
+{
+    app.Run();
+    app.Logger.LogInformation("WebAPI started");
+}
+finally
+{
+    app.Logger.LogInformation("WebAPI finished");
+}
