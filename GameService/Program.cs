@@ -1,11 +1,16 @@
 using GameService;
-using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services => { services.AddHostedService<Worker>(); })
-    .UseSerilog((context, serilogConfig) =>
+    .ConfigureLogging((context, logConfig) =>
     {
-        serilogConfig.ReadFrom.Configuration(context.Configuration);
+        logConfig.ClearProviders();
+        
+        // TODO Check logging for azure functions
+        if (context.HostingEnvironment.IsDevelopment())
+        {
+            logConfig.AddConsole();
+        }
     })
     .Build();
 

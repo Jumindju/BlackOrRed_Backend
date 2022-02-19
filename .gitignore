@@ -6,3 +6,5 @@ riderModule.iml
 WebAPI/logs/
 
 GameService/logs/
+
+WebAPI/Properties/launchSettings.json

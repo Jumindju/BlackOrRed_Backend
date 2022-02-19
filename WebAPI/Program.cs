@@ -1,24 +1,41 @@
-using Serilog;
-
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog((_, serilogConfig) =>
+
+// configure logging/monitoring
+builder.Logging.ClearProviders();
+
+// TODO disable application insights for dev
+if (builder.Environment.IsDevelopment())
 {
-    serilogConfig.ReadFrom.Configuration(builder.Configuration);
-});
+    builder.Logging.AddConsole();
+}
+else
+{
+    builder.Services.AddApplicationInsightsTelemetry();
+}
 
 var app = builder
     .Build();
 
-app.UseSerilogRequestLogging();
+var rnd = new Random();
+app.MapGet("/test", (ILogger<Program> logger) =>
+{
+    if (rnd.Next(1, 4) > 2)
+    {
+        logger.LogInformation("Test log data");
+        return Results.Ok("Hello World!");
+    }
+    
+    logger.LogError(new Exception("Test exception"), "Error");
+    return Results.StatusCode(500);
+});
 
-app.MapGet("/test", () => "Hello World!");
-
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 try
 {
+    logger.LogInformation("Web API started");
     app.Run();
-    app.Logger.LogInformation("WebAPI started");
 }
 finally
 {
-    app.Logger.LogInformation("WebAPI finished");
+    logger.LogInformation("WebAPI finished");
 }
