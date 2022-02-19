@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.HttpOverrides;
+using WebAPI.Helper.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // configure logging/monitoring
@@ -16,6 +19,13 @@ else
 var app = builder
     .Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+app.UseRequestLoggingMiddleware();
+
 var rnd = new Random();
 app.MapGet("/test", (ILogger<Program> logger) =>
 {
@@ -24,7 +34,7 @@ app.MapGet("/test", (ILogger<Program> logger) =>
         logger.LogInformation("Test log data");
         return Results.Ok("Hello World!");
     }
-    
+
     logger.LogError(new Exception("Test exception"), "Error");
     return Results.StatusCode(500);
 });
