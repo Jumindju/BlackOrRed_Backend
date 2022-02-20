@@ -12,5 +12,6 @@ public class Worker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // TODO Start with queue handling
+        _logger.LogInformation("Started worker");
     }
 }
