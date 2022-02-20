@@ -23,7 +23,7 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
-            docker build ./WebApi -t jumindju/bor-web-api:${{ github.sha }}
+            docker build ./WebAPI -t jumindju/bor-web-api:${{ github.sha }}
             docker push jumindju/bor-web-api:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'
