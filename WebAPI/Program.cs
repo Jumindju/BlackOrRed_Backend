@@ -5,13 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // configure logging/monitoring
 builder.Logging.ClearProviders();
-
-// TODO disable application insights for dev
-if (builder.Environment.IsDevelopment())
-{
-    builder.Logging.AddConsole();
-}
-else
+builder.Logging.AddConsole();
+if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddApplicationInsightsTelemetry();
 }
