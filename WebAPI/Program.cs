@@ -20,6 +20,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 app.UseRequestLoggingMiddleware();
+app.UseUserProvider();
 
 var rnd = new Random();
 app.MapGet("/test", (ILogger<Program> logger) =>

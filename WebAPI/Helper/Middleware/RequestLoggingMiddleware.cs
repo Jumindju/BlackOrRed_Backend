@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
+using WebAPI.Model;
+using WebAPI.Model.Lobby;
 
 namespace WebAPI.Helper.Middleware;
 
@@ -29,12 +31,17 @@ public class RequestLoggingMiddleware
         }
         finally
         {
+            Guid? userUid = null;
+            if (context.Items[Constants.UserItemKey] is LobbyPlayer lb)
+                userUid = lb.UserUId;
+            
             _logger.LogInformation(
-                "Request {method} {path}: {statusCode}; IpAdr: {ipAdr} UserAgent: {userAgent} fullUrl: {fullUrl} Req_UId: {reqGuid}",
+                "Request {method} {path}: {statusCode}; IpAdr: {ipAdr} UserUId: {userUid} UserAgent: {userAgent} fullUrl: {fullUrl} Req_UId: {reqGuid}",
                 context.Request.Method,
                 context.Request.Path.Value,
                 context.Response.StatusCode,
-                context.Connection.RemoteIpAddress.ToString(),
+                context.Connection.RemoteIpAddress?.ToString(),
+                userUid,
                 context.Request.Headers.UserAgent,
                 context.Request.GetDisplayUrl(),
                 context.Items[RequestGuidItemKey]
