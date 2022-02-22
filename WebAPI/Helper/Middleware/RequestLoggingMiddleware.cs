@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http.Extensions;
 using WebAPI.Model;
 using WebAPI.Model.Exceptions;
 using WebAPI.Model.Helper;
@@ -21,6 +22,9 @@ public class RequestLoggingMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        var timer = new Stopwatch();
+        timer.Start();
+
         try
         {
             context.Items.Add(RequestGuidItemKey, Guid.NewGuid());
@@ -47,15 +51,18 @@ public class RequestLoggingMiddleware
         }
         finally
         {
+            timer.Stop();
+
             Guid? playerUid = null;
             if (context.Items[Constants.PlayerItemKey] is LobbyPlayer lb)
                 playerUid = lb.PlayerUId;
 
             _logger.LogInformation(
-                "Request {Method} {Path}: {StatusCode}; IpAdr: {IpAdr} PlayerUId: {PlayerUId} UserAgent: {UserAgent} fullUrl: {FullUrl} Req_UId: {ReqGuid}",
+                "Request {Method} {Path}: {StatusCode} in {ElapsedTime}ms; IpAdr: {IpAdr} PlayerUId: {PlayerUId} UserAgent: {UserAgent} fullUrl: {FullUrl} Req_UId: {ReqGuid}",
                 context.Request.Method,
                 context.Request.Path.Value,
                 context.Response.StatusCode,
+                timer.ElapsedMilliseconds,
                 context.Connection.RemoteIpAddress?.ToString(),
                 playerUid,
                 context.Request.Headers.UserAgent,

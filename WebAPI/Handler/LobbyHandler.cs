@@ -14,8 +14,8 @@ public class LobbyHandler : ILobbyHandler
 
     private readonly Random _random = new Random();
 
-    private const int MinPlayers = 2;
-    private const int MaxPlayers = 10;
+    public const int MinPlayers = 2;
+    public const int MaxPlayers = 10;
 
     private const int PublicIdLength = 6;
     private const int AlphabetLength = 26;

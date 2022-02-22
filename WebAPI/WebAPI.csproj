@@ -31,4 +31,7 @@
       <_ContentIncludedByDefault Remove="logs\log.json" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="WebAPI.Tests"/>
+    </ItemGroup>
 </Project>
