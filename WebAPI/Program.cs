@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Endpoints;
 using WebAPI.Handler;
 using WebAPI.Helper.Extensions;
 using WebAPI.Helper.Middleware;
@@ -20,35 +21,21 @@ if (!builder.Environment.IsDevelopment())
 }
 
 // configure services
-builder.Services.AddSingleton<ILobbyHandler, LobbyHandler>();
-builder.Services.AddSingleton<ILobbyRepository, LobbyRepository>();
+builder.Services.AddLobbyServices();
 
 var app = builder
     .Build();
 
+// add middlewares
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
-
 app.UseRequestLoggingMiddleware();
 app.UseUserProvider();
 
-// map endpoints
-app.MapPost("/lobby",
-    async ([FromServices] ILobbyHandler lobbyHandler, HttpContext context, [FromBody] LobbySettings? lobbySettings) =>
-    {
-        if (lobbySettings is null)
-            return Results.BadRequest();
-
-        var curPlayer = context.GetPlayer();
-        if (curPlayer is null)
-            return Results.Unauthorized();
-
-        var createdLobby = await lobbyHandler.CreateLobby(curPlayer.PlayerUId, lobbySettings);
-
-        return Results.Created($"lobby/{createdLobby.PublicId}", createdLobby);
-    });
+// add endpoints
+app.MapLobbyEndpoints();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 try
