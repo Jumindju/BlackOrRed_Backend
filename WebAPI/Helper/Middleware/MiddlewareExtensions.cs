@@ -6,5 +6,5 @@ public static class MiddlewareExtensions
         => builder.UseMiddleware<RequestLoggingMiddleware>();
 
     public static IApplicationBuilder UseUserProvider(this IApplicationBuilder builder)
-        => builder.UseMiddleware<UserProviderMiddleware>();
+        => builder.UseMiddleware<PlayerProviderMiddleware>();
 }

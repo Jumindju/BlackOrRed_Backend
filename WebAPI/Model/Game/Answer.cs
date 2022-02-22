@@ -1,7 +1,7 @@
 ﻿namespace WebAPI.Model.Game;
 
 /// <summary>
-/// Represents an answer a user can give to a question
+/// Represents an answer a player can give to a question
 /// </summary>
 public enum Answer
 {

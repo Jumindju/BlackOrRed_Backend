@@ -1,3 +1,3 @@
 ﻿namespace WebAPI.Model.Lobby;
 
-public record LobbyPlayer(Guid UserUId, string Name);
+public record LobbyPlayer(Guid PlayerUId, string Name);
