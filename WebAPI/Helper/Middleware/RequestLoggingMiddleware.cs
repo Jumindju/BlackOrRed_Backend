@@ -12,8 +12,6 @@ public class RequestLoggingMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger _logger;
 
-    private const string RequestGuidItemKey = "req_guid";
-
     public RequestLoggingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
     {
         _next = next;
@@ -27,7 +25,7 @@ public class RequestLoggingMiddleware
 
         try
         {
-            context.Items.Add(RequestGuidItemKey, Guid.NewGuid());
+            context.Items.Add(Constants.RequestGuidItemKey, Guid.NewGuid());
             await _next(context);
         }
         catch (StatusCodeException ex)
@@ -67,7 +65,7 @@ public class RequestLoggingMiddleware
                 playerUid,
                 context.Request.Headers.UserAgent,
                 context.Request.GetDisplayUrl(),
-                context.Items[RequestGuidItemKey]
+                context.Items[Constants.RequestGuidItemKey]
             );
         }
     }

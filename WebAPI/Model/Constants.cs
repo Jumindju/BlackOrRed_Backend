@@ -5,4 +5,5 @@ public class Constants
     public const string PlayerUIdHeader = "Player-Id";
     public const string PlayerNameHeader = "Player-Name";
     public const string PlayerItemKey = "Current-Player";
+    public const string RequestGuidItemKey = "req_guid";
 }
