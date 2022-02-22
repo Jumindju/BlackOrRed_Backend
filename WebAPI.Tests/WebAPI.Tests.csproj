@@ -27,4 +27,8 @@
       <ProjectReference Include="..\WebAPI\WebAPI.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UnitTests\Middlewares" />
+    </ItemGroup>
+
 </Project>

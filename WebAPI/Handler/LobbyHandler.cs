@@ -12,7 +12,7 @@ public class LobbyHandler : ILobbyHandler
     private readonly ILogger _logger;
     private readonly ILobbyRepository _lobbyRepository;
 
-    private readonly Random _random = new Random();
+    private readonly Random _random = new ();
 
     public const int MinPlayers = 2;
     public const int MaxPlayers = 10;
@@ -57,7 +57,7 @@ public class LobbyHandler : ILobbyHandler
         return new LobbyDto(createdLobby, null);
     }
 
-    private string GeneratePublicId()
+    internal string GeneratePublicId()
     {
         var stringBuilder = new StringBuilder();
 
@@ -73,14 +73,15 @@ public class LobbyHandler : ILobbyHandler
         return stringBuilder.ToString();
     }
 
-    private static char PublicIdNumToChar(int num)
+    internal static char PublicIdNumToChar(int number)
     {
-        var characterCode = num switch
+        var characterCode = number switch
         {
             < 0 or > AlphabetLength + Numbers => throw new ArgumentException(
-                "PublicId element must be between 0 and 35"),
-            < AlphabetLength => 'A' + num,
-            _ => '0' + (num - AlphabetLength)
+                "PublicId element must be between 0 and 35",
+                nameof(number)),
+            < AlphabetLength => 'A' + number,
+            _ => '0' + (number - AlphabetLength)
         };
 
         return (char)characterCode;

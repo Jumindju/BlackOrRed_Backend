@@ -3,5 +3,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ff1a46b6_002D7bcd_002D448f_002Db060_002D045cf8a04c1f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateLobby_Return400_WhenSettingsIsNull" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::0C8020A0-372D-4D83-B7A5-24FFF06FFA44::net6.0::WebAPI.Tests.Endpoints.LobbyEndpointTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::0C8020A0-372D-4D83-B7A5-24FFF06FFA44::net6.0::WebAPI.Tests.UnitTests.Handler.LobbyHandlerTests.CreateLobby_Throw400Exception_WithToFewPlayers&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::0C8020A0-372D-4D83-B7A5-24FFF06FFA44::net6.0::WebAPI.Tests.UnitTests.Handler.LobbyHandlerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
