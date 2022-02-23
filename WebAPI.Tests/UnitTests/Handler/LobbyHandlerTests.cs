@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using WebAPI.Handler;
 using WebAPI.Interfaces.Repositories;
 using WebAPI.Model.Exceptions;
@@ -23,6 +24,45 @@ public class LobbyHandlerTests
     public LobbyHandlerTests()
     {
         _sut = new LobbyHandler(_loggerFactory, _lobbyRepository);
+    }
+
+    [Fact]
+    private async Task GetLobbyByPublicId_ReturnNull_WhenLobbyNotFound()
+    {
+        // Arrange
+        const string publicId = "ABC123";
+        _lobbyRepository.GetLobbyByPublicId(publicId).ReturnsNull();
+
+        // Act
+        var result = await _sut.GetLobbyByPublicId(publicId);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    private async Task GetLobbyByPublicId_ReturnLobby_WhenLobbyWasFound()
+    {
+        // Arrange
+        var lobbyId = Guid.NewGuid();
+        const string publicId = "ABC123";
+        var adminGuid = Guid.NewGuid();
+        const int maxPlayer = 4;
+        var creationTime = DateTime.UtcNow;
+        var currentPlayer = new List<LobbyPlayer>();
+        Guid? currentSessionUId = null;
+
+        var lobbyDb = new LobbyDb(lobbyId, publicId, adminGuid, maxPlayer, creationTime, currentSessionUId,
+            currentPlayer);
+        var lobbyDto = new LobbyDto(publicId, adminGuid, maxPlayer, creationTime, currentPlayer, null);
+        _lobbyRepository.GetLobbyByPublicId(publicId).Returns(lobbyDb);
+
+        // Act
+        var result = await _sut.GetLobbyByPublicId(publicId);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(lobbyDto);
     }
 
     [Fact]

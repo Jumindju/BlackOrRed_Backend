@@ -12,6 +12,7 @@ public static class LobbyEndpoints
 {
     public static void MapLobbyEndpoints(this WebApplication app)
     {
+        app.MapGet("/lobby/{publicId}", GetLobbyById);
         app.MapPost("/lobby", CreateLobby);
     }
 
@@ -20,6 +21,16 @@ public static class LobbyEndpoints
     {
         services.AddSingleton<ILobbyHandler, LobbyHandler>();
         services.AddSingleton<ILobbyRepository, LobbyRepository>();
+    }
+
+    private static async Task<IResult> GetLobbyById([FromServices] ILobbyHandler lobbyHandler,
+        [FromRoute] string publicId)
+    {
+        var lobby = await lobbyHandler.GetLobbyByPublicId(publicId);
+        
+        return lobby is null
+            ? Results.NotFound()
+            : Results.Ok(lobby);
     }
 
     private static async Task<IResult> CreateLobby([FromServices] ILobbyHandler lobbyHandler, HttpContext context,

@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using NSubstitute.ReturnsExtensions;
 using WebAPI.Handler;
 using WebAPI.Interfaces.Handler;
 using WebAPI.Model;
 using WebAPI.Model.Exceptions;
 using WebAPI.Model.Helper;
 using WebAPI.Model.Lobby;
+using WebAPI.Model.Session;
 using Xunit;
 
 namespace WebAPI.Tests.Endpoints;
@@ -30,6 +32,46 @@ public class LobbyEndpointTests
         Environment.SetEnvironmentVariable("Cosmos:DbName", "Test");
         Environment.SetEnvironmentVariable("Cosmos:Uri", "https://test.com");
         Environment.SetEnvironmentVariable("Cosmos:Key", "Test");
+    }
+
+    [Fact]
+    private async Task GetLobbyByPublicId_Return404_WhenLobbyNotExists()
+    {
+        // Arrange
+        const string publicId = "ABC123";
+        _lobbyHandler.GetLobbyByPublicId(publicId)
+            .ReturnsNull();
+        await using var app = new LobbyEndpointsApp(x => { x.AddSingleton(_lobbyHandler); });
+        var httpClient = app.CreateClient();
+        // Act
+        var response = await httpClient.GetAsync($"lobby/{publicId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    private async Task GetLobbyByPublicId_Return200_WhenLobbyExists()
+    {
+        // Arrange
+        const string publicId = "ABC123";
+        var currentAdmin = Guid.NewGuid();
+        const int maxPlayer = 5;
+        var creationTime = DateTime.UtcNow;
+        var player = new List<LobbyPlayer>();
+        SessionDb? curSession = null;
+        var lobby = new LobbyDto(publicId, currentAdmin, maxPlayer, creationTime, player, curSession);
+
+        _lobbyHandler.GetLobbyByPublicId(publicId)
+            .Returns(lobby);
+        await using var app = new LobbyEndpointsApp(x => { x.AddSingleton(_lobbyHandler); });
+        var httpClient = app.CreateClient();
+        // Act
+        var response = await httpClient.GetAsync($"lobby/{publicId}");
+        var responseObj = await response.Content.ReadFromJsonAsync<LobbyDto>();
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        responseObj.Should().BeEquivalentTo(lobby);
     }
 
     [Fact]

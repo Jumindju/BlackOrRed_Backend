@@ -28,6 +28,14 @@ public class LobbyHandler : ILobbyHandler
         _logger = loggerFactory.CreateLogger<LobbyHandler>();
     }
 
+    public async Task<LobbyDto?> GetLobbyByPublicId(string publicId)
+    {
+        var lobby = await _lobbyRepository.GetLobbyByPublicId(publicId);
+        return lobby is null
+            ? null
+            : new LobbyDto(lobby, null); // TODO load session
+    }
+
     public async Task<LobbyDto> CreateLobby(Guid creatorUId, LobbySettings settings)
     {
         if (settings.MaxPlayer is < MinPlayers or > MaxPlayers)
