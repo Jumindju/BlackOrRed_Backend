@@ -1,5 +1,4 @@
 ﻿using Cosmonaut;
-using Microsoft.Azure.Documents.Client;
 
 namespace WebAPI.Helper.Cosmos;
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using NSubstitute;
 using WebAPI.Helper.Cosmos;
 using Xunit;
 

@@ -5,7 +5,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using WebAPI.Helper.Extensions;
 using WebAPI.Helper.Middleware;
 using WebAPI.Model;

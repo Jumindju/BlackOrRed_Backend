@@ -30,14 +30,4 @@ public record LobbyDto
     public DateTime CreationTime { get; init; }
     public List<LobbyPlayer> CurrentUsers { get; init; }
     public SessionDb? CurrentSession { get; init; }
-
-    public void Deconstruct(out string PublicId, out Guid CurrentAdmin, out int MaxPlayer, out DateTime CreationTime, out List<LobbyPlayer> CurrentUsers, out SessionDb? CurrentSession)
-    {
-        PublicId = this.PublicId;
-        CurrentAdmin = this.CurrentAdmin;
-        MaxPlayer = this.MaxPlayer;
-        CreationTime = this.CreationTime;
-        CurrentUsers = this.CurrentUsers;
-        CurrentSession = this.CurrentSession;
-    }
 }

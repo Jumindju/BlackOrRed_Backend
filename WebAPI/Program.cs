@@ -1,16 +1,9 @@
-using Cosmonaut;
 using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 using WebAPI.Endpoints;
-using WebAPI.Handler;
 using WebAPI.Helper.Cosmos;
-using WebAPI.Helper.Extensions;
 using WebAPI.Helper.Middleware;
-using WebAPI.Interfaces.Handler;
-using WebAPI.Interfaces.Repositories;
 using WebAPI.Model.Lobby;
-using WebAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

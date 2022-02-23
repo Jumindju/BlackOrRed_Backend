@@ -1,7 +1,5 @@
 ﻿using System.Net;
 using Cosmonaut;
-using Cosmonaut.Exceptions;
-using Microsoft.Azure.Documents;
 using WebAPI.Interfaces.Repositories;
 using WebAPI.Model.Exceptions;
 using WebAPI.Model.Lobby;
