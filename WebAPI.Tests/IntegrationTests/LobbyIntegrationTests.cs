@@ -5,14 +5,12 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using WebAPI.Endpoints;
 using WebAPI.Handler;
 using WebAPI.Interfaces.Handler;
 using WebAPI.Model;
@@ -26,6 +24,13 @@ namespace WebAPI.Tests.Endpoints;
 public class LobbyEndpointTests
 {
     private readonly ILobbyHandler _lobbyHandler = Substitute.For<ILobbyHandler>();
+
+    public LobbyEndpointTests()
+    {
+        Environment.SetEnvironmentVariable("Cosmos:DbName", "Test");
+        Environment.SetEnvironmentVariable("Cosmos:Uri", "https://test.com");
+        Environment.SetEnvironmentVariable("Cosmos:Key", "Test");
+    }
 
     [Fact]
     private async Task CreateLobby_Return400_WhenSettingsIsNull()
@@ -125,7 +130,7 @@ public class LobbyEndpointTests
 
         _lobbyHandler.CreateLobby(Arg.Is(playerGuid), Arg.Is(lobbySettings))
             .Throws(new StatusCodeException(HttpStatusCode.BadRequest, InvalidPlayerErrMessage));
-        
+
         await using var app = new LobbyEndpointsApp(x => { x.AddSingleton(_lobbyHandler); });
         var httpClient = app.CreateClient();
 
@@ -197,7 +202,7 @@ public class LobbyEndpointTests
 
         _lobbyHandler.CreateLobby(Arg.Is(playerGuid), Arg.Is(lobbySettings))
             .Returns(createdLobby);
-        
+
         await using var app = new LobbyEndpointsApp(x => { x.AddSingleton(_lobbyHandler); });
         var httpClient = app.CreateClient();
 

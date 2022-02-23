@@ -32,8 +32,9 @@ public class LobbyRepositoryTests
     {
         // Arrange
         const string publicId = "123abc";
-        _cosmosStore.FindAsync(publicId)
-            .ReturnsNull();
+        _cosmosStore.
+            QuerySingleAsync<LobbyDto>(default)
+            .ReturnsNullForAnyArgs();
 
         // Act
         var result = await _sut.GetLobbyByPublicId(publicId);
@@ -46,16 +47,17 @@ public class LobbyRepositoryTests
     private async Task GetLobbyByPublicId_ReturnEntity_WhenEntityFound()
     {
         // Arrange
+        var id = Guid.NewGuid();
         const string publicId = "ABC123";
         var adminUser = Guid.NewGuid();
         const int maxPlayer = 5;
         var creationTime = DateTime.UtcNow;
         Guid? currentSession = null;
         var players = new List<LobbyPlayer>();
-        var lobby = new LobbyDb(publicId, adminUser, maxPlayer, creationTime, currentSession, players);
+        var lobby = new LobbyDb(id, publicId, adminUser, maxPlayer, creationTime, currentSession, players);
         _cosmosStore
-            .FindAsync(publicId)
-            .Returns(lobby);
+            .QuerySingleAsync<LobbyDb>(default)
+            .ReturnsForAnyArgs(lobby);
 
         // Act
         var result = await _sut.GetLobbyByPublicId(publicId);
@@ -70,8 +72,9 @@ public class LobbyRepositoryTests
     {
         // Arrange
         const string publicId = "123ABC";
-        _cosmosStore.FindAsync(publicId)
-            .ReturnsNull();
+        _cosmosStore.
+            QuerySingleAsync<LobbyDto>(default)
+            .ReturnsNullForAnyArgs();
 
         // Act
         var result = await _sut.PublicIdExist(publicId);
@@ -83,16 +86,17 @@ public class LobbyRepositoryTests
     private async Task PublicIdExist_ReturnTrue_WhenLobbyFound()
     {
         // Arrange
+        var id = Guid.NewGuid();
         const string publicId = "ABC123";
         var adminUser = Guid.NewGuid();
         const int maxPlayer = 5;
         var creationTime = DateTime.UtcNow;
         Guid? currentSession = null;
         var players = new List<LobbyPlayer>();
-        var lobby = new LobbyDb(publicId, adminUser, maxPlayer, creationTime, currentSession, players);
+        var lobby = new LobbyDb(id, publicId, adminUser, maxPlayer, creationTime, currentSession, players);
         _cosmosStore
-            .FindAsync(publicId)
-            .Returns(lobby);
+            .QuerySingleAsync<LobbyDb>(default)
+            .ReturnsForAnyArgs(lobby);
 
         // Act
         var result = await _sut.PublicIdExist(publicId);
@@ -126,8 +130,8 @@ public class LobbyRepositoryTests
         // Assert
         createLobbyTask.Should()
             .ThrowAsync<StatusCodeException>()
-            .Where(ex=>
-                ex.StatusCode==expectedStatusCode &&
+            .Where(ex =>
+                ex.StatusCode == expectedStatusCode &&
                 ex.Message == expectedExMsg &&
                 ex.InnerException != null &&
                 ex.InnerException.GetType() == typeof(ArgumentException) &&
@@ -138,14 +142,15 @@ public class LobbyRepositoryTests
     private async Task CreateLobby_ReturnLobby_WhenLobbyCreated()
     {
         // Arrange
+        var id = Guid.NewGuid();
         const string publicId = "ABC123";
         var adminUId = Guid.NewGuid();
         const int maxPlayer = 5;
         var creationTime = DateTime.UtcNow;
         Guid? currentSession = null;
         var players = new List<LobbyPlayer>();
-        
-        var lobby = new LobbyDb(publicId, adminUId, maxPlayer, creationTime, currentSession, players);
+
+        var lobby = new LobbyDb(id, publicId, adminUId, maxPlayer, creationTime, currentSession, players);
         var createResult = new CosmosResponse<LobbyDb>(lobby, null, CosmosOperationStatus.Success);
 
         _cosmosStore

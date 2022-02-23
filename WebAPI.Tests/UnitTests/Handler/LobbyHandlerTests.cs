@@ -92,6 +92,7 @@ public class LobbyHandlerTests
     private async Task CreateLobby_CreatedLobby()
     {
         // Arrange
+        var id = Guid.NewGuid();
         const int maxPlayers = LobbyHandler.MaxPlayers - 1;
         var lobbySettings = new LobbySettings(maxPlayers);
         var playerGuid = Guid.NewGuid();
@@ -101,7 +102,7 @@ public class LobbyHandlerTests
 
         _lobbyRepository
             .CreateLobby(playerGuid, maxPlayers, Arg.Any<string>())
-            .Returns(new LobbyDb(publicId, playerGuid, maxPlayers, creationTime, null, new List<LobbyPlayer>()));
+            .Returns(new LobbyDb(id, publicId, playerGuid, maxPlayers, creationTime, null, new List<LobbyPlayer>()));
         // Act
         var createdLobby = await _sut.CreateLobby(playerGuid, lobbySettings);
 
@@ -128,26 +129,26 @@ public class LobbyHandlerTests
         // Arrange
         const int numToConvert = int.MinValue;
         const string paramName = "number";
-        
+
         // Act
         var convertTask = _sut.Invoking(_ => LobbyHandler.PublicIdNumToChar(numToConvert));
-        
+
         // Assert
         convertTask.Should()
             .Throw<ArgumentException>()
             .WithParameterName(paramName);
     }
-    
+
     [Fact]
     private void PublicIdNumToChar_ThrowArgumentEx_WhenNumIsTooHigh()
     {
         // Arrange
         const int numToConvert = int.MaxValue;
         const string paramName = "number";
-        
+
         // Act
         var convertTask = _sut.Invoking(_ => LobbyHandler.PublicIdNumToChar(numToConvert));
-        
+
         // Assert
         convertTask.Should()
             .Throw<ArgumentException>()
@@ -167,7 +168,7 @@ public class LobbyHandlerTests
         // Assert
         publicIdChar.Should().Be(resultChar);
     }
-    
+
     [Fact]
     private void PublicIdNumToChar_ReturnA_WhenNumIsLastAlphabet()
     {
@@ -181,6 +182,7 @@ public class LobbyHandlerTests
         // Assert
         publicIdChar.Should().Be(resultChar);
     }
+
     [Fact]
     private void PublicIdNumToChar_ReturnA_WhenNumIsFirstNumber()
     {
@@ -194,6 +196,7 @@ public class LobbyHandlerTests
         // Assert
         publicIdChar.Should().Be(resultChar);
     }
+
     [Fact]
     private void PublicIdNumToChar_ReturnA_WhenNumIsLastNumber()
     {
