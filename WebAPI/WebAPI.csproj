@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Cosmonaut" Version="2.11.3" />
+      <PackageReference Include="Cosmonaut.Extensions.Microsoft.DependencyInjection" Version="2.3.0" />
       <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
     </ItemGroup>
 
@@ -32,6 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="WebAPI.Tests"/>
+        <InternalsVisibleTo Include="WebAPI.Tests" />
     </ItemGroup>
 </Project>

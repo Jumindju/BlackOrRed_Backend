@@ -1,19 +1,62 @@
-﻿using WebAPI.Interfaces.Repositories;
+﻿using System.Net;
+using Cosmonaut;
+using Cosmonaut.Exceptions;
+using Microsoft.Azure.Documents;
+using WebAPI.Interfaces.Repositories;
+using WebAPI.Model.Exceptions;
 using WebAPI.Model.Lobby;
 
 namespace WebAPI.Repositories;
 
 public class LobbyRepository : ILobbyRepository
 {
-    // TODO Use azure db
-    public Task<bool> PublicIdExist(string publicId)
+    private readonly ICosmosStore<LobbyDb> _lobbyStore;
+    private readonly ILogger _logger;
+
+    public LobbyRepository(ICosmosStore<LobbyDb> lobbyStore, ILoggerFactory loggerFactory)
     {
-        return Task.FromResult(false);
+        _lobbyStore = lobbyStore;
+        _logger = loggerFactory.CreateLogger<LobbyRepository>();
     }
 
-    public Task<LobbyDb> CreateLobby(Guid creatorId, int maxPlayer, string publicId)
+    public async Task<LobbyDb?> GetLobbyByPublicId(string publicId)
     {
-        return Task.FromResult(new LobbyDb(publicId, creatorId, maxPlayer, DateTime.UtcNow, null,
+        const string query = "select * from c where c.PublicId = @publicId";
+        var parameter = new
+        {
+            publicId
+        };
+        return await _lobbyStore.QuerySingleAsync<LobbyDb>(query, parameter);
+    }
+
+    public async Task<bool> PublicIdExist(string publicId)
+    {
+        var lobby = await GetLobbyByPublicId(publicId);
+        return lobby is not null;
+    }
+
+    public async Task<LobbyDb> CreateLobby(Guid creatorId, int maxPlayer, string publicId)
+    {
+        var createdLobbyResponse = await _lobbyStore.AddAsync(new LobbyDb(
+            Guid.NewGuid(),
+            publicId,
+            creatorId,
+            maxPlayer,
+            DateTime.UtcNow,
+            null,
             new List<LobbyPlayer>()));
+
+        if (createdLobbyResponse.IsSuccess)
+        {
+            _logger.LogInformation("Lobby {LobbyId} created", createdLobbyResponse.Entity.PublicId);
+            return createdLobbyResponse.Entity;
+        }
+
+        _logger.LogError(createdLobbyResponse.Exception, "Could not create lobby. Status: {OperationStatus}",
+            createdLobbyResponse.CosmosOperationStatus);
+
+        throw new StatusCodeException(HttpStatusCode.InternalServerError,
+            "Could not create lobby",
+            createdLobbyResponse.Exception);
     }
 }

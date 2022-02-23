@@ -1,7 +1,10 @@
+using Cosmonaut;
+using Cosmonaut.Extensions.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Endpoints;
 using WebAPI.Handler;
+using WebAPI.Helper.Cosmos;
 using WebAPI.Helper.Extensions;
 using WebAPI.Helper.Middleware;
 using WebAPI.Interfaces.Handler;
@@ -19,6 +22,11 @@ if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddApplicationInsightsTelemetry();
 }
+
+// cosmos services
+builder.Services.AddCosmosStore<LobbyDb>(
+    CosmosHelper.GetCosmosStoreSettings(builder.Configuration)
+);
 
 // configure services
 builder.Services.AddLobbyServices();

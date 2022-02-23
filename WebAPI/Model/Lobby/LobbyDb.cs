@@ -1,3 +1,18 @@
-﻿namespace WebAPI.Model.Lobby;
+﻿using Cosmonaut;
+using Cosmonaut.Attributes;
 
-public record LobbyDb(string PublicId, Guid CurrentAdmin, int MaxPlayer, DateTime CreationTime, Guid? SessionUId, List<LobbyPlayer> CurrentUsers);
+namespace WebAPI.Model.Lobby;
+
+[SharedCosmosCollection(Constants.SharedCollectionName, "Lobbies")]
+public record LobbyDb(
+    Guid id,
+    [property: CosmosPartitionKey] string PublicId,
+    Guid CurrentAdmin,
+    int MaxPlayer,
+    DateTime CreationTime,
+    Guid? SessionUId,
+    List<LobbyPlayer> CurrentUsers
+) : ISharedCosmosEntity
+{
+    public string CosmosEntityName { get; set; }
+}
