@@ -9,9 +9,10 @@ public class Worker : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // TODO Start with queue handling
         _logger.LogInformation("Started worker");
+        return Task.CompletedTask;
     }
 }
