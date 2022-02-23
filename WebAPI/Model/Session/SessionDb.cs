@@ -13,5 +13,5 @@ public record SessionDb(
     List<SessionPlayer> ActivePlayers
 ) : ISharedCosmosEntity
 {
-    public string CosmosEntityName { get; set; }
+    public string CosmosEntityName { get; set; } = null!;
 }

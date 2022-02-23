@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -78,7 +78,7 @@ public class LobbyHandlerTests
         var createLobbyTask = _sut.Invoking(lobbyHandler => lobbyHandler.CreateLobby(creatorGuid, settings));
 
         // Assert
-        createLobbyTask
+        await createLobbyTask
             .Should()
             .ThrowAsync<StatusCodeException>()
             .Where(ex =>
@@ -99,7 +99,7 @@ public class LobbyHandlerTests
         var createLobbyTask = _sut.Invoking(lobbyHandler => lobbyHandler.CreateLobby(creatorGuid, settings));
 
         // Assert
-        createLobbyTask
+        await createLobbyTask
             .Should()
             .ThrowAsync<StatusCodeException>()
             .Where(ex =>
@@ -114,12 +114,14 @@ public class LobbyHandlerTests
         var settings = new LobbySettings();
         var creatorUId = Guid.NewGuid();
 
-        _lobbyRepository.PublicIdExist(default).ReturnsForAnyArgs(Task.FromResult(false));
+        _lobbyRepository
+            .PublicIdExist("")
+            .ReturnsForAnyArgs(Task.FromResult(true));
         // Act
         var createLobbyTask = _sut.Invoking(lobbyHandler => lobbyHandler.CreateLobby(creatorUId, settings));
 
         // Assert
-        createLobbyTask
+        await createLobbyTask
             .Should()
             .ThrowAsync<StatusCodeException>()
             .Where(ex =>

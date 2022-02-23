@@ -32,8 +32,7 @@ public class LobbyRepositoryTests
     {
         // Arrange
         const string publicId = "123abc";
-        _cosmosStore.
-            QuerySingleAsync<LobbyDto>(default)
+        _cosmosStore.QuerySingleAsync<LobbyDto>(default)
             .ReturnsNullForAnyArgs();
 
         // Act
@@ -72,8 +71,7 @@ public class LobbyRepositoryTests
     {
         // Arrange
         const string publicId = "123ABC";
-        _cosmosStore.
-            QuerySingleAsync<LobbyDto>(default)
+        _cosmosStore.QuerySingleAsync<LobbyDto>(default)
             .ReturnsNullForAnyArgs();
 
         // Act
@@ -118,17 +116,19 @@ public class LobbyRepositoryTests
         const string testExceptionMsg = "Test exception";
         var testException = new ArgumentException(testExceptionMsg);
 
-        var createErrResult = new CosmosResponse<LobbyDb>(null, testException, CosmosOperationStatus.Conflict);
+        var anyLobbyArgument = new LobbyDb(Guid.NewGuid(), publicId, adminUId, maxPlayer, DateTime.UtcNow, null,
+            new List<LobbyPlayer>());
+        var createErrResult = new CosmosResponse<LobbyDb>(anyLobbyArgument, testException, CosmosOperationStatus.Conflict);
 
         _cosmosStore
-            .AddAsync(default)
+            .AddAsync(anyLobbyArgument)
             .ReturnsForAnyArgs(createErrResult);
 
         // Act
         var createLobbyTask = _sut.Invoking(x => x.CreateLobby(adminUId, maxPlayer, publicId));
 
         // Assert
-        createLobbyTask.Should()
+        await createLobbyTask.Should()
             .ThrowAsync<StatusCodeException>()
             .Where(ex =>
                 ex.StatusCode == expectedStatusCode &&

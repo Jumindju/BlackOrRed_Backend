@@ -12,16 +12,16 @@ public record LobbyDto
     }
 
     [JsonConstructor]
-    public LobbyDto(string PublicId, Guid CurrentAdmin, int MaxPlayer, DateTime CreationTime,
-        List<LobbyPlayer> CurrentUsers,
-        SessionDb? CurrentSession)
+    public LobbyDto(string publicId, Guid currentAdmin, int maxPlayer, DateTime creationTime,
+        List<LobbyPlayer> currentUsers,
+        SessionDb? currentSession)
     {
-        this.PublicId = PublicId;
-        this.CurrentAdmin = CurrentAdmin;
-        this.MaxPlayer = MaxPlayer;
-        this.CreationTime = CreationTime;
-        this.CurrentUsers = CurrentUsers;
-        this.CurrentSession = CurrentSession;
+        this.PublicId = publicId;
+        this.CurrentAdmin = currentAdmin;
+        this.MaxPlayer = maxPlayer;
+        this.CreationTime = creationTime;
+        this.CurrentUsers = currentUsers;
+        this.CurrentSession = currentSession;
     }
 
     public string PublicId { get; init; }

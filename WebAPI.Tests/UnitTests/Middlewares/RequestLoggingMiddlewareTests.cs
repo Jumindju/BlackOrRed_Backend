@@ -44,7 +44,7 @@ public class RequestLoggingMiddlewareTests
         var invokeTask = _sut.Invoking(middleware => middleware.Invoke(httpContext));
 
         // Assert
-        invokeTask.Should().NotThrowAsync();
+        await invokeTask.Should().NotThrowAsync();
 
         httpContext.Items[Constants.RequestGuidItemKey].Should().NotBeNull();
         httpContext.Response.StatusCode.Should().Be((int)customStatusCode);
@@ -79,7 +79,7 @@ public class RequestLoggingMiddlewareTests
         var invokeTask = _sut.Invoking(middleware => middleware.Invoke(httpContext));
 
         // Assert
-        invokeTask.Should().NotThrowAsync();
+        await invokeTask.Should().NotThrowAsync();
 
         httpContext.Items[Constants.RequestGuidItemKey].Should().NotBeNull();
         httpContext.Response.StatusCode.Should().Be((int)customStatusCode);
@@ -106,7 +106,7 @@ public class RequestLoggingMiddlewareTests
         httpContext.Response
             .WhenForAnyArgs(x =>
                 x.WriteAsJsonAsync("", Serializer.IgnoreNullSerializer))
-            .Do(x => throw new Exception("Write exception"));
+            .Do(_ => throw new Exception("Write exception"));
 
         _next
             .WhenForAnyArgs(x => x.Invoke(httpContext))
@@ -115,7 +115,7 @@ public class RequestLoggingMiddlewareTests
         var invokeTask = _sut.Invoking(middleware => middleware.Invoke(httpContext));
 
         // Assert
-        invokeTask.Should().NotThrowAsync();
+        await invokeTask.Should().NotThrowAsync();
 
         httpContext.Items[Constants.RequestGuidItemKey].Should().NotBeNull();
         httpContext.Response.StatusCode.Should().Be((int)customStatusCode);
@@ -134,7 +134,7 @@ public class RequestLoggingMiddlewareTests
         var invokeTask = _sut.Invoking(middleware => middleware.Invoke(httpContext));
 
         // Assert
-        invokeTask
+        await invokeTask
             .Should()
             .NotThrowAsync();
         httpContext.Items[Constants.RequestGuidItemKey].Should().NotBeNull();
@@ -147,7 +147,7 @@ public class RequestLoggingMiddlewareTests
     {
         var httpContext = Substitute.For<HttpContext>();
         httpContext.Response.Body = new MemoryStream();
-        httpContext.Items = new Dictionary<object, object?>();
+        httpContext.Items.Returns(new Dictionary<object, object?>());
 
         return httpContext;
     }

@@ -52,8 +52,9 @@ public class RequestLoggingMiddleware
             timer.Stop();
 
             Guid? playerUid = null;
-            if (context.Items[Constants.PlayerItemKey] is LobbyPlayer lb)
-                playerUid = lb.PlayerUId;
+            if (context.Items.TryGetValue(Constants.PlayerItemKey, out var curPlayer)
+                && curPlayer is not null)
+                playerUid = ((LobbyPlayer)curPlayer).PlayerUId;
 
             _logger.LogInformation(
                 "Request {Method} {Path}: {StatusCode} in {ElapsedTime}ms; IpAdr: {IpAdr} PlayerUId: {PlayerUId} UserAgent: {UserAgent} fullUrl: {FullUrl} Req_UId: {ReqGuid}",

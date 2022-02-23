@@ -15,9 +15,7 @@ public class CosmosHelperTests
         // Arrange
         const string expectedMsg = "Cosmos db name not provided";
         
-        var inMemorySettings = new Dictionary<string, string>();
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
             .Build();
         // Act
         var act = () => CosmosHelper.GetCosmosStoreSettings(configuration);

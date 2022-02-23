@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -96,13 +96,13 @@ public class PlayerProviderMiddlewareTests
         httpContext.Request.Headers.Returns(headers);
         httpContext.Items
             .When(x => x.Add(Constants.PlayerItemKey, player))
-            .Do(x => throw new Exception());
+            .Do(_ => throw new Exception());
 
         // Act
         var invokeTask = _sut.Invoking(middleware => middleware.Invoke(httpContext));
 
         // Assert
-        invokeTask.Should().NotThrowAsync<Exception>();
+        await invokeTask.Should().NotThrowAsync<Exception>();
         httpContext.GetPlayer().Should().BeNull();
     }
 

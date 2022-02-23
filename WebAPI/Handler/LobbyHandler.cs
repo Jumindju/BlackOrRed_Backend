@@ -12,7 +12,7 @@ public class LobbyHandler : ILobbyHandler
     private readonly ILogger _logger;
     private readonly ILobbyRepository _lobbyRepository;
 
-    private readonly Random _random = new ();
+    private readonly Random _random = new();
 
     public const int MinPlayers = 2;
     public const int MaxPlayers = 10;
@@ -44,14 +44,18 @@ public class LobbyHandler : ILobbyHandler
         }
 
         string? publicId = null;
+        var foundUniquePublicId = false;
         for (var i = 0; i < MaxPublicIdLookupTries; i++)
         {
             publicId = GeneratePublicId();
-            if (!await _lobbyRepository.PublicIdExist(publicId))
-                break;
+            if (await _lobbyRepository.PublicIdExist(publicId))
+                continue;
+
+            foundUniquePublicId = true;
+            break;
         }
 
-        if (publicId is null)
+        if (!foundUniquePublicId)
         {
             _logger.LogError("Could not find publicId after 10 tries. (CreatorId: {CreatorId})", creatorUId);
             throw new StatusCodeException(HttpStatusCode.InternalServerError, "Could not find a unique publicId");

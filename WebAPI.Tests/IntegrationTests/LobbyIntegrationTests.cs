@@ -20,7 +20,7 @@ using WebAPI.Model.Lobby;
 using WebAPI.Model.Session;
 using Xunit;
 
-namespace WebAPI.Tests.Endpoints;
+namespace WebAPI.Tests.IntegrationTests;
 
 public class LobbyEndpointTests
 {
@@ -186,12 +186,13 @@ public class LobbyEndpointTests
             }
         };
         var response = await httpClient.SendAsync(request);
-        var (responseMsg, responseEx) = await response.Content.ReadFromJsonAsync<StatusCodeExceptionResponse>();
+        var statusCodeExceptionResponse = await response.Content.ReadFromJsonAsync<StatusCodeExceptionResponse>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseMsg.Should().Be(InvalidPlayerErrMessage);
-        responseEx.Should().BeNull();
+        statusCodeExceptionResponse.Should().NotBeNull();
+        statusCodeExceptionResponse!.Message.Should().Be(InvalidPlayerErrMessage);
+        statusCodeExceptionResponse.Inner.Should().BeNull();
     }
 
     [Fact]
@@ -220,12 +221,13 @@ public class LobbyEndpointTests
             }
         };
         var response = await httpClient.SendAsync(request);
-        var (responseMsg, responseEx) = await response.Content.ReadFromJsonAsync<StatusCodeExceptionResponse>();
+        var statusCodeExceptionResponse = await response.Content.ReadFromJsonAsync<StatusCodeExceptionResponse>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        responseMsg.Should().Be(InvalidPlayerErrMessage);
-        responseEx.Should().BeNull();
+        statusCodeExceptionResponse.Should().NotBeNull();
+        statusCodeExceptionResponse!.Message.Should().Be(InvalidPlayerErrMessage);
+        statusCodeExceptionResponse.Inner.Should().BeNull();
     }
 
     [Fact]
