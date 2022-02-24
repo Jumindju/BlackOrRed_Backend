@@ -12,11 +12,6 @@ jobs:
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
 
-        - name: 'Login via Azure CLI'
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-
         - name: 'Build and push image'
           uses: azure/docker-login@v1
           with:
@@ -25,14 +20,3 @@ jobs:
         - run: |
             docker build ./WebAPI -t jumindju/bor-web-api:${{ github.sha }}
             docker push jumindju/bor-web-api:${{ github.sha }}
-
-        - name: 'Deploy to Azure Container Instances'
-          uses: 'azure/aci-deploy@v1'
-          with:
-            resource-group: ${{ secrets.RESOURCE_GROUP }}
-            dns-name-label: bor-web-api
-            image: jumindju/bor-web-api:${{ github.sha }}
-            cpu: 1
-            memory: 1
-            name: bor-web-api
-            location: 'west europe'
